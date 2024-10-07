@@ -39,7 +39,7 @@ public class GobblinMetadataException extends IOException {
   public Set<String> droppedPartitionValues;
   public List<HiveRegistrationUnit.Column> partitionKeys;
 
-  GobblinMetadataException(String datasetPath, String dbName, String tableName, String GMCETopicPartition, long lowWatermark, long highWatermark,
+  public GobblinMetadataException(String datasetPath, String dbName, String tableName, String GMCETopicPartition, long lowWatermark, long highWatermark,
       List<String> failedWriters, OperationType operationType, List<HiveRegistrationUnit.Column> partitionKeys, Exception exception) {
     super(String.format("failed to flush table %s, %s", dbName, tableName), exception);
     this.datasetPath = datasetPath;
