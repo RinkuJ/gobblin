@@ -911,6 +911,12 @@ public class ConfigurationKeys {
   public static final String METRICS_REPORTING_OPENTELEMETRY_PREFIX = "metrics.reporting.opentelemetry.";
   public static final String METRICS_REPORTING_OPENTELEMETRY_ENABLED = METRICS_REPORTING_OPENTELEMETRY_PREFIX + "enabled";
 
+  public static final String METRICS_REPORTING_OPENTELEMETRY_LOGEXPORTER_ENABLED = METRICS_REPORTING_OPENTELEMETRY_PREFIX + "logexporter.enabled";
+
+  public static final Boolean DEFAULT_METRICS_REPORTING_OPENTELEMETRY_LOGEXPORTER_ENABLED = false;
+
+  public static final String METRICS_REPORTING_OPENTELEMETRY_LOGEXPORTER_CLASSNAME = METRICS_REPORTING_OPENTELEMETRY_PREFIX + "logexporter.className";
+
   public static final String METRICS_REPORTING_OPENTELEMETRY_CONFIGS_PREFIX = METRICS_REPORTING_OPENTELEMETRY_PREFIX + "configs.";
   public static final Boolean DEFAULT_METRICS_REPORTING_OPENTELEMETRY_ENABLED = false;
 
@@ -1071,13 +1077,18 @@ public class ConfigurationKeys {
    * Configuration properties related to Flows
    */
   public static final String FLOW_RUN_IMMEDIATELY = "flow.runImmediately";
-  public static final String GOBBLIN_FLOW_SLA_TIME = "gobblin.flow.sla.time";
-  public static final String GOBBLIN_FLOW_SLA_TIME_UNIT = "gobblin.flow.sla.timeunit";
-  public static final String DEFAULT_GOBBLIN_FLOW_SLA_TIME_UNIT = TimeUnit.MINUTES.name();
-  public static final String GOBBLIN_JOB_START_SLA_TIME = "gobblin.job.start.sla.time";
-  public static final String GOBBLIN_JOB_START_SLA_TIME_UNIT = "gobblin.job.start.sla.timeunit";
-  public static final long FALLBACK_GOBBLIN_JOB_START_SLA_TIME = 10L;
-  public static final String FALLBACK_GOBBLIN_JOB_START_SLA_TIME_UNIT = TimeUnit.MINUTES.name();
+  /*
+  TODO -
+  The following config names are different from variable name to maintain backward compatibility.
+  We want to change "sla" to "deadline".
+   */
+  public static final String GOBBLIN_FLOW_FINISH_DEADLINE_TIME = "gobblin.flow.sla.time";
+  public static final String GOBBLIN_FLOW_FINISH_DEADLINE_TIME_UNIT = "gobblin.flow.sla.timeunit";
+  public static final String DEFAULT_GOBBLIN_FLOW_FINISH_DEADLINE_TIME_UNIT = TimeUnit.MINUTES.name();
+  public static final String GOBBLIN_JOB_START_DEADLINE_TIME = "gobblin.job.start.sla.time";
+  public static final String GOBBLIN_JOB_START_DEADLINE_TIME_UNIT = "gobblin.job.start.sla.timeunit";
+  public static final long FALLBACK_GOBBLIN_JOB_START_DEADLINE_TIME = 10L;
+  public static final String FALLBACK_GOBBLIN_JOB_START_DEADLINE_TIME_UNIT = TimeUnit.MINUTES.name();
   public static final String DATASET_SUBPATHS_KEY = "gobblin.flow.dataset.subPaths";
   public static final String DATASET_BASE_INPUT_PATH_KEY = "gobblin.flow.dataset.baseInputPath";
   public static final String DATASET_BASE_OUTPUT_PATH_KEY = "gobblin.flow.dataset.baseOutputPath";

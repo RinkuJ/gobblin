@@ -21,6 +21,7 @@ import java.net.URI;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
@@ -43,6 +44,7 @@ import org.apache.gobblin.runtime.spec_catalog.FlowCatalog;
 import org.apache.gobblin.service.modules.flowgraph.Dag;
 import org.apache.gobblin.service.modules.flowgraph.DagNodeId;
 import org.apache.gobblin.service.modules.spec.JobExecutionPlan;
+import org.apache.gobblin.service.monitoring.FlowStatus;
 import org.apache.gobblin.service.monitoring.JobStatus;
 import org.apache.gobblin.service.monitoring.JobStatusRetriever;
 import org.apache.gobblin.util.ConfigUtils;
@@ -69,7 +71,7 @@ public class MySqlDagManagementStateStore implements DagManagementStateStore {
   Map<URI, TopologySpec> topologySpecMap;
   private final Config config;
   public static final String FAILED_DAG_STATESTORE_PREFIX = "failedDagStateStore";
-  public static final String DAG_STATESTORE_CLASS_KEY = DagManager.DAG_MANAGER_PREFIX + "dagStateStoreClass";
+  public static final String DAG_STATESTORE_CLASS_KEY = "dagStateStoreClass";
   FlowCatalog flowCatalog;
   @Getter
   private final DagManagerMetrics dagManagerMetrics = new DagManagerMetrics();
@@ -131,7 +133,7 @@ public class MySqlDagManagementStateStore implements DagManagementStateStore {
   }
 
   @Override
-  public void markDagFailed(DagManager.DagId dagId) throws IOException {
+  public void markDagFailed(Dag.DagId dagId) throws IOException {
     Dag<JobExecutionPlan> dag = this.dagStateStore.getDag(dagId);
     this.failedDagStateStore.writeCheckpoint(dag);
     this.dagStateStore.cleanUp(dagId);
@@ -141,7 +143,7 @@ public class MySqlDagManagementStateStore implements DagManagementStateStore {
   }
 
   @Override
-  public void deleteDag(DagManager.DagId dagId) throws IOException {
+  public void deleteDag(Dag.DagId dagId) throws IOException {
     if (this.dagStateStore.cleanUp(dagId)) {
       log.info("Deleted dag {}", dagId);
     } else {
@@ -150,13 +152,13 @@ public class MySqlDagManagementStateStore implements DagManagementStateStore {
   }
 
   @Override
-  public void deleteFailedDag(DagManager.DagId dagId) throws IOException {
+  public void deleteFailedDag(Dag.DagId dagId) throws IOException {
     this.failedDagStateStore.cleanUp(dagId);
     log.info("Deleted failed dag {}", dagId);
   }
 
   @Override
-  public Optional<Dag<JobExecutionPlan>> getFailedDag(DagManager.DagId dagId) throws IOException {
+  public Optional<Dag<JobExecutionPlan>> getFailedDag(Dag.DagId dagId) throws IOException {
     return Optional.of(this.failedDagStateStore.getDag(dagId));
   }
 
@@ -167,7 +169,7 @@ public class MySqlDagManagementStateStore implements DagManagementStateStore {
   }
 
   @Override
-  public Optional<Dag<JobExecutionPlan>> getDag(DagManager.DagId dagId) throws IOException {
+  public Optional<Dag<JobExecutionPlan>> getDag(Dag.DagId dagId) throws IOException {
     return Optional.ofNullable(this.dagStateStore.getDag(dagId));
   }
 
@@ -184,7 +186,7 @@ public class MySqlDagManagementStateStore implements DagManagementStateStore {
   }
 
   @Override
-  public Set<Dag.DagNode<JobExecutionPlan>> getDagNodes(DagManager.DagId dagId) throws IOException {
+  public Set<Dag.DagNode<JobExecutionPlan>> getDagNodes(Dag.DagId dagId) throws IOException {
     return this.dagStateStore.getDagNodes(dagId);}
 
   @Override
@@ -209,6 +211,11 @@ public class MySqlDagManagementStateStore implements DagManagementStateStore {
     } else {
       return java.util.Optional.empty();
     }
+  }
+
+  @Override
+  public List<FlowStatus> getAllFlowStatusesForFlow(String flowGroup, String flowName) {
+    return this.jobStatusRetriever.getAllFlowStatusesForFlowExecutionsOrdered(flowGroup, flowName);
   }
 
   @Override
